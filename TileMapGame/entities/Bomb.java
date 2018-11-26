@@ -1,26 +1,23 @@
 package TileMapGame.entities;
 
 import java.util.ArrayList;
-
 import java.util.Stack;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
 
+
 import TileMapGame.Play;
 
 public class Bomb extends Sprite{
+	private Play parent;
 	private int fireLeght =1;
 	private float animationTime = 0;
 	private float explodeTime = 3;
@@ -33,12 +30,13 @@ public class Bomb extends Sprite{
 	private ArrayList<Vector2> memDeadZone = new ArrayList<Vector2>();
 	private Sound bomno;
 	//Constructor
-	public Bomb(int x, int y, Animation bombWarn, Sprite sprite, TiledMapTileLayer _collisionLayer) {
+	public Bomb(int x, int y, Animation bombWarn, Sprite sprite, TiledMapTileLayer _collisionLayer,Play _parent) {
 		// TODO Auto-generated constructor stub
 		super(sprite);
 		this.setX(x);
 		this.setY(y);
 		this.bombWarn = bombWarn;
+		this.parent = _parent;
 		this.setCollisionLayer(_collisionLayer);
 		bomno = Gdx.audio.newSound(Gdx.files.internal("sound/Explosion.ogg"));
 		
@@ -51,7 +49,11 @@ public class Bomb extends Sprite{
 		
 		//Set explode animation
 		if(animationTime >= explodeTime && animationTime <  explodeTime + 0.1) {
-			bomno.play();
+			if(parent.getParent().getPreferences().isSoundEffectsEnabled()) {
+				bomno.play(parent.getParent().getPreferences().getSoundVolume());
+				
+			}
+			
 		}
 		
 		if(animationTime >= explodeTime && animationTime <=explodeTime+duration) {
@@ -165,7 +167,7 @@ public class Bomb extends Sprite{
 		//colision to fire while not explode
 		if( !this.explode) {
 			
-			if( Play.checkDeadzone((int)((getX()+32)/64),(int)((getY()+32)/64)) ) {
+			if( parent.checkDeadzone((int)((getX()+32)/64),(int)((getY()+32)/64)) ) {
 				animationTime = explodeTime;
 			
 			}
@@ -175,7 +177,7 @@ public class Bomb extends Sprite{
 		if(animationTime >= explodeTime && animationTime < explodeTime + duration) {
 			this.explode = true;
 			this.setTexture(new Texture("entities/fireC.png"));
-			Play.setDeadzone(this.memDeadZone, true);
+			parent.setDeadzone(this.memDeadZone, true);
 		}
 		
 		if(animationTime >= explodeTime + duration) {
@@ -186,12 +188,12 @@ public class Bomb extends Sprite{
 					//System.out.println(V.getTile().getId());
 					if(V.getTile().getId()== 787) {
 						
-						Play.deleteCell((int)memFire.peek().x,(int)memFire.peek().y);
+						parent.deleteCell((int)memFire.peek().x,(int)memFire.peek().y);
 					}
 				}
 				memFire.pop();
 			}
-			Play.setDeadzone(this.memDeadZone, false);
+			parent.setDeadzone(this.memDeadZone, false);
 			memDeadZone.clear();
 
 			//Play.deleteCell((int)(getX()/64), (int)(getY()/64));
@@ -267,6 +269,14 @@ public class Bomb extends Sprite{
 
 	public void setMemDeadZone(ArrayList<Vector2> memDeadZone) {
 		this.memDeadZone = memDeadZone;
+	}
+
+	public Play getParent() {
+		return parent;
+	}
+
+	public void setParent(Play parent) {
+		this.parent = parent;
 	}
 	
 	

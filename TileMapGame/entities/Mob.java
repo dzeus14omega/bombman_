@@ -1,5 +1,7 @@
 package TileMapGame.entities;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +16,7 @@ import TileMapGame.Play;
 import TileMapGame.entities.Item.ItemType;
 
 public class Mob extends Sprite {
+	
 	private Vector2 velocity = new Vector2();
 	private float speed = 10;
 	private TiledMapTileLayer collisionLayer;
@@ -24,10 +27,12 @@ public class Mob extends Sprite {
 	private Player p1;
 	
 	private Sound SoundDie;
+	private Play parent;
 	
 	//Constructor
-	public Mob(Animation up, Animation down,Animation left, Animation right,Sprite sprite,TiledMapTileLayer _collisionLayer,Player _player) {
+	public Mob(Animation up, Animation down,Animation left, Animation right,Sprite sprite,TiledMapTileLayer _collisionLayer,Player _player, Play _play) {
 		super(sprite);
+		this.parent = _play;
 		this.p1 = _player;
 		this.collisionLayer = _collisionLayer;
 		this.trangThai = 1;
@@ -35,8 +40,9 @@ public class Mob extends Sprite {
 		this.down = down;
 		this.left = left;
 		this.right = right;
+		this.life= true;
 		this.SoundDie = Gdx.audio.newSound(Gdx.files.internal("sound/EnemyDie1.ogg"));
-}
+	}
 	
 	@Override
 	public void draw(Batch spriteBatch) {
@@ -52,18 +58,6 @@ public class Mob extends Sprite {
 		boolean collisionX = false, collisionY = false;
 		//System.out.println(velocity.x +" "+ velocity.y);
 		
-		if(velocity.x>0){
-			this.setTexture(new Texture("sprite/mobR1.png"));
-		}
-		if(velocity.x<0){
-			this.setTexture(new Texture("sprite/mobL1.png"));
-		}
-		if(velocity.y>0) {
-			this.setTexture(new Texture("sprite/mobU1.png"));
-		}
-		if(velocity.y<0) {
-			this.setTexture(new Texture("sprite/mobD1.png"));
-		}
 		
 		if(this.trangThai == 1) {
 			velocity.y = speed;
@@ -92,12 +86,12 @@ public class Mob extends Sprite {
 				setY((int)((getY()+32)/64)*64);
 			}
 			
-			if(collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+64f-1f)/64)) != null || Play.bombPos((int)((getX()+64f)/64),(int)((getY()+64f-1f)/64)) ) {
+			if(collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+64f-1f)/64)) != null || parent.bombPos((int)((getX()+64f)/64),(int)((getY()+64f-1f)/64)) ) {
 				//collisionX = true;
-				this.trangThai = 1;
-			} else if (collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+1f)/64)) != null || Play.bombPos((int)((getX()+64f)/64), (int)((getY()+1f)/64)) ) {
+				this.trangThai = rand(1,3);
+			} else if (collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+1f)/64)) != null || parent.bombPos((int)((getX()+64f)/64), (int)((getY()+1f)/64)) ) {
 				//collisionX = true;
-				this.trangThai = 1;
+				this.trangThai = rand(1,3);
 			}
 		}
 		//---move left
@@ -105,12 +99,12 @@ public class Mob extends Sprite {
 			if((getY()+32)/64 - (int)((getY()+32)/64) > 0.35 && (getY()+32)/64 - (int)((getY()+32)/64) <0.65) {
 				setY((int)((getY()+32)/64)*64);
 			}
-			if(collisionLayer.getCell((int)(getX()/64), (int)((getY()+1f)/64)) != null|| Play.bombPos((int)(getX()/64), (int)((getY()+1f)/64)) ) {
+			if(collisionLayer.getCell((int)(getX()/64), (int)((getY()+1f)/64)) != null|| parent.bombPos((int)(getX()/64), (int)((getY()+1f)/64)) ) {
 				//collisionX = true;
-				this.trangThai = 3;
-			} else if (collisionLayer.getCell((int)((getX())/64), (int)((getY()+64f-1f)/64)) != null || Play.bombPos((int)((getX())/64), (int)((getY()+64f-1f)/64))) {
+				this.trangThai = rand(3,4);
+			} else if (collisionLayer.getCell((int)((getX())/64), (int)((getY()+64f-1f)/64)) != null || parent.bombPos((int)((getX())/64), (int)((getY()+64f-1f)/64))) {
 				//collisionX = true;
-				this.trangThai = 3;
+				this.trangThai = rand(3,4);
 			}
 		}
 			
@@ -121,12 +115,12 @@ public class Mob extends Sprite {
 			if((getX()+32)/64 - (int)((getX()+32)/64) > 0.35 && (getX()+32)/64 - (int)((getX()+32)/64) <0.65) {
 				setX((int)((getX()+32)/64)*64);
 			}
-			if(collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)((getY()+64f)/64)) != null || Play.bombPos((int)((getX()+64f-1f)/64), (int)((getY()+64f)/64))) {
+			if(collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)((getY()+64f)/64)) != null || parent.bombPos((int)((getX()+64f-1f)/64), (int)((getY()+64f)/64))) {
 				//collisionY = true;
-				this.trangThai = 2;
-			} else if (collisionLayer.getCell((int)((getX()+1f)/64), (int)((getY()+64f)/64)) != null || Play.bombPos((int)((getX()+1f)/64), (int)((getY()+64f)/64))) {
+				this.trangThai = rand(2,4);
+			} else if (collisionLayer.getCell((int)((getX()+1f)/64), (int)((getY()+64f)/64)) != null || parent.bombPos((int)((getX()+1f)/64), (int)((getY()+64f)/64))) {
 				//collisionY = true;
-				this.trangThai = 2;
+				this.trangThai = rand(2,4);
 			}
 		}
 		//---move down
@@ -134,17 +128,17 @@ public class Mob extends Sprite {
 			if((getX()+32)/64 - (int)((getX()+32)/64) > 0.35 && (getX()+32)/64 - (int)((getX()+32)/64) <0.65) {
 				setX((int)((getX()+32)/64)*64);
 			}
-			if(collisionLayer.getCell((int)((getX()+1f)/64), (int)(getY()/64)) != null || Play.bombPos((int)((getX()+1f)/64), (int)(getY()/64))) {
+			if(collisionLayer.getCell((int)((getX()+1f)/64), (int)(getY()/64)) != null || parent.bombPos((int)((getX()+1f)/64), (int)(getY()/64))) {
 				//collisionY = true;
-				this.trangThai = 4;
-			}else if (collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)(getY()/64)) != null || Play.bombPos((int)((getX()+64f-1f)/64), (int)(getY()/64))) {
+				this.trangThai = rand(1,2);
+			}else if (collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)(getY()/64)) != null || parent.bombPos((int)((getX()+64f-1f)/64), (int)(getY()/64))) {
 				//collisionY = true;
-				this.trangThai = 4;
+				this.trangThai = rand(1,2);
 			}
 		}
 		
 		//collision to fire
-		if( Play.checkDeadzone((int)((getX()+32)/64),(int)((getY()+32)/64)) ) {
+		if( parent.checkDeadzone((int)((getX()+32)/64),(int)((getY()+32)/64)) ) {
 			life = false;
 			SoundDie.play();
 		}
@@ -158,6 +152,18 @@ public class Mob extends Sprite {
 		setRegion((TextureRegion) (velocity.x < 0 ? left.getKeyFrame(animationTime) : velocity.x > 0 ? right.getKeyFrame(animationTime) : velocity.y>0 ? up.getKeyFrame(animationTime) :  down.getKeyFrame(animationTime) ));
 	}
 
+	//Rand
+	public static int rand(int min,int max) {
+		try {
+			Random rn = new Random();
+			int range = max - min +1;
+			int randomNum=min+rn.nextInt(range);
+			return randomNum;
+		}catch(Exception e){
+			e.printStackTrace();
+			return -1;
+		}
+	}
 	 
 	public TiledMapTileLayer getCollisionLayer() {
 		return collisionLayer;

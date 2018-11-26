@@ -25,7 +25,7 @@ import TileMapGame.entities.Mob;
 import TileMapGame.entities.Player;
 
 
-public class Play implements Screen {
+public class Play2 extends Play implements Screen {
 	private Box2DTutorial parent;
 	private static TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
@@ -33,23 +33,24 @@ public class Play implements Screen {
 	private Player player;
 	private static Music music;
 	
-	
 	private Item[] item;
 	private Bomb[] bomb;
 	private Mob[] mob;
 	private boolean[][] deadzone;
 	private boolean WinCondition=false;
 
-	public Play(Box2DTutorial box2dTutorial) {
-		// TODO Auto-generated constructor stub
+	
+	public Play2(Box2DTutorial box2dTutorial) {
+		super(box2dTutorial);
 		this.parent = box2dTutorial;
 		this.music  = Gdx.audio.newMusic(Gdx.files.internal("audio/SuperBomberman-Area1.ogg"));
+		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		map = new TmxMapLoader().load("maps/Dz.tmx");
+		map = new TmxMapLoader().load("maps/Dz2.tmx");
 		
 		renderer = new OrthogonalTiledMapRenderer(map,2);
 		camera = new OrthographicCamera();
@@ -75,7 +76,7 @@ public class Play implements Screen {
 		Animation MHstill = new Animation(1f,new TextureRegion(new Texture("sprite/myhero2.png")));
 		MHstill.setPlayMode(PlayMode.LOOP);
 		player = new Player(MHup,MHdown,MHleft,MHright,MHstill,new Sprite(new Texture("sprite/myhero.png")),(TiledMapTileLayer)map.getLayers().get("object"),this);
-		player.setPosition(4*2* player.getCollisionLayer().getTileWidth(), 1*2*player.getCollisionLayer().getTileHeight());
+		player.setPosition(4*2* player.getCollisionLayer().getTileWidth(), 2*2*player.getCollisionLayer().getTileHeight());
 		player.setSize(player.getWidth()*2, player.getHeight()*2);		//dat lai size nhan vat
 		
 		//Set music
@@ -131,28 +132,39 @@ public class Play implements Screen {
 		right2.setPlayMode(PlayMode.LOOP);
 		
 		Mob mob4 = new Mob(up2,down2,left2,right2,new Sprite(new Texture("sprite/dogD.png")), (TiledMapTileLayer)map.getLayers().get("object"),player,this);
-		mob4.setPosition(13*2*mob4.getCollisionLayer().getTileWidth(), 13*2*mob4.getCollisionLayer().getTileHeight());
+		mob4.setPosition(12*2*mob4.getCollisionLayer().getTileWidth(), 12*2*mob4.getCollisionLayer().getTileHeight());
 		mob4.setSize(mob4.getWidth()*2, mob4.getHeight()*2);
-		mob = new Mob[]{mob1,mob2,mob3,mob4};
+		
+		Mob mob5 = new Mob(up2,down2,left2,right2,new Sprite(new Texture("sprite/dogD.png")), (TiledMapTileLayer)map.getLayers().get("object"),player,this);
+		mob5.setPosition(4*2*mob4.getCollisionLayer().getTileWidth(), 10*2*mob4.getCollisionLayer().getTileHeight());
+		mob5.setSize(mob5.getWidth()*2, mob5.getHeight()*2);
+		
+		mob = new Mob[]{mob1,mob2,mob3,mob4,mob5};
 		
 		
 		//Set Item
 		Item extraBomb1 =new Item(ItemType.extraBomb, new Sprite(new Texture("entities/extraBombIcon.png")),  (TiledMapTileLayer)map.getLayers().get("object"), player,this);
-		extraBomb1.setPosition(1*2*32, 3*2*32);
+		extraBomb1.setPosition(2*2*32, 7*2*32);
 		extraBomb1.setSize(extraBomb1.getWidth()*2, extraBomb1.getHeight()*2);
 		
 		Item boost = new Item(ItemType.boost, new Sprite(new Texture("entities/Boost.png")), (TiledMapTileLayer)map.getLayers().get("object"), player,this);
-		boost.setPosition(10*2*32, 4*2*32);
+		boost.setPosition(10*2*32, 7*2*32);
 		boost.setSize(boost.getWidth()*2, boost.getHeight()*2);
 		
 		Item extraFire = new Item(ItemType.fire, new Sprite(new Texture("entities/extraFireIcon.png")), (TiledMapTileLayer)map.getLayers().get("object"), player,this);
-		extraFire.setPosition(4*2*32, 9*2*32);
+		extraFire.setPosition(10*2*32, 11*2*32);
 		extraFire.setSize(extraFire.getWidth()*2, extraFire.getHeight()*2);
 		
+		Item extraFire2 = new Item(ItemType.fire, new Sprite(new Texture("entities/extraFireIcon.png")), (TiledMapTileLayer)map.getLayers().get("object"), player,this);
+		extraFire2.setPosition(7*2*32, 13*2*32);
+		extraFire2.setSize(extraFire2.getWidth()*2, extraFire2.getHeight()*2);
+		
 		Item finish = new Item(ItemType.finish, new Sprite(new Texture("entities/finish.png")),(TiledMapTileLayer)map.getLayers().get("object"), player,this);
-		finish.setPosition(64*8, 64*11);
+		finish.setPosition(64*6, 64*12);
 		finish.setSize(finish.getWidth()*2, finish.getHeight()*2);
-		item = new Item[] {extraBomb1,boost,extraFire,finish};
+		
+		
+		item = new Item[] {extraBomb1,boost,extraFire,extraFire2,finish};
 		
 		
 		Gdx.input.setInputProcessor(player);

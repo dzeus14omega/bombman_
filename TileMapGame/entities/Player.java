@@ -2,16 +2,12 @@ package TileMapGame.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
 
 import TileMapGame.Play;
@@ -26,28 +22,32 @@ public class Player extends Sprite implements InputProcessor{
 		still,
 	}
 	
+	
 	private TrangThai tt = TrangThai.still;
 	private int totalBomb = 1;
 	private int fireLength =1;
 	private Vector2 velocity = new Vector2();
 	private float speed = 15, animationTime=0;
 	private TiledMapTileLayer collisionLayer;
-	private static boolean life = true;
+	private static boolean life;
 	private Animation up,down,left,right,still;
+	private Play parent;
 
 	
 	
 	
 	
 	//Constructor
-	public Player(Animation up, Animation down,Animation left,Animation right,Animation still, Sprite sprite,TiledMapTileLayer _collisionLayer) {
+	public Player(Animation up, Animation down,Animation left,Animation right,Animation still, Sprite sprite,TiledMapTileLayer _collisionLayer, Play _play) {
 		super(sprite);
+		this.parent = _play;
 		this.collisionLayer = _collisionLayer;
 		this.up = up;
 		this.down = down;
 		this.left = left;
 		this.right = right;
 		this.still = still;
+		this.life = true;
 		/**test*/
 		for(int i=0;i<collisionLayer.getWidth();i++) {
 			for(int j=0;j<collisionLayer.getHeight();j++) {
@@ -107,9 +107,9 @@ public class Player extends Sprite implements InputProcessor{
 				setY((int)((getY()+32)/64)*64);
 			}
 			
-			if(collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+64f-1f)/64)) != null || Play.bombPos((int)((getX()+64f)/64),(int)((getY()+64f-1f)/64)) ) {
+			if(collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+64f-1f)/64)) != null || parent.bombPos((int)((getX()+64f)/64),(int)((getY()+64f-1f)/64)) ) {
 				collisionX = true;
-			} else if (collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+1f)/64)) != null || Play.bombPos((int)((getX()+64f)/64), (int)((getY()+1f)/64))) {
+			} else if (collisionLayer.getCell((int)((getX()+64f)/64), (int)((getY()+1f)/64)) != null || parent.bombPos((int)((getX()+64f)/64), (int)((getY()+1f)/64))) {
 				collisionX = true;
 			}
 		}
@@ -118,9 +118,9 @@ public class Player extends Sprite implements InputProcessor{
 			if((getY()+32)/64 - (int)((getY()+32)/64) > 0.35 && (getY()+32)/64 - (int)((getY()+32)/64) <0.65) {
 				setY((int)((getY()+32)/64)*64);
 			}
-			if(collisionLayer.getCell((int)(getX()/64), (int)((getY()+1f)/64)) != null || Play.bombPos((int)(getX()/64),(int)((getY()+1f)/64)) ) {
+			if(collisionLayer.getCell((int)(getX()/64), (int)((getY()+1f)/64)) != null || parent.bombPos((int)(getX()/64),(int)((getY()+1f)/64)) ) {
 				collisionX = true;
-			} else if (collisionLayer.getCell((int)((getX())/64), (int)((getY()+64f-1f)/64)) != null|| Play.bombPos((int)((getX())/64), (int)((getY()+64f-1f)/64)) ) {
+			} else if (collisionLayer.getCell((int)((getX())/64), (int)((getY()+64f-1f)/64)) != null|| parent.bombPos((int)((getX())/64), (int)((getY()+64f-1f)/64)) ) {
 				collisionX = true;
 			}
 		}
@@ -138,9 +138,9 @@ public class Player extends Sprite implements InputProcessor{
 			if((getX()+32)/64 - (int)((getX()+32)/64) > 0.35 && (getX()+32)/64 - (int)((getX()+32)/64) <0.65) {
 				setX((int)((getX()+32)/64)*64);
 			}
-			if(collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)((getY()+64f)/64)) != null || Play.bombPos((int)((getX()+64f-1f)/64),(int)((getY()+64f)/64)))  {
+			if(collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)((getY()+64f)/64)) != null || parent.bombPos((int)((getX()+64f-1f)/64),(int)((getY()+64f)/64)))  {
 				collisionY = true;
-			} else if (collisionLayer.getCell((int)((getX()+1f)/64), (int)((getY()+64f)/64)) != null || Play.bombPos((int)((getX()+1f)/64), (int)((getY()+64f)/64)) ) {
+			} else if (collisionLayer.getCell((int)((getX()+1f)/64), (int)((getY()+64f)/64)) != null || parent.bombPos((int)((getX()+1f)/64), (int)((getY()+64f)/64)) ) {
 				collisionY = true;
 			}
 		}
@@ -149,9 +149,9 @@ public class Player extends Sprite implements InputProcessor{
 			if((getX()+32)/64 - (int)((getX()+32)/64) > 0.35 && (getX()+32)/64 - (int)((getX()+32)/64) <0.65) {
 				setX((int)((getX()+32)/64)*64);
 			}
-			if(collisionLayer.getCell((int)((getX()+1f)/64), (int)(getY()/64)) != null || Play.bombPos((int)((getX()+1f)/64), (int)(getY()/64)) ){
+			if(collisionLayer.getCell((int)((getX()+1f)/64), (int)(getY()/64)) != null || parent.bombPos((int)((getX()+1f)/64), (int)(getY()/64)) ){
 				collisionY = true;
-			}else if (collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)(getY()/64)) != null || Play.bombPos((int)((getX()+64f-1f)/64), (int)(getY()/64)) ) {
+			}else if (collisionLayer.getCell((int)((getX()+64f-1f)/64), (int)(getY()/64)) != null || parent.bombPos((int)((getX()+64f-1f)/64), (int)(getY()/64)) ) {
 				collisionY = true;
 			}
 		}
@@ -164,7 +164,7 @@ public class Player extends Sprite implements InputProcessor{
 		}
 		
 		//collision player to fire
-		if( Play.checkDeadzone((int)((getX()+32)/64),(int)((getY()+32)/64)) ) {
+		if( parent.checkDeadzone((int)((getX()+32)/64),(int)((getY()+32)/64)) ) {
 			life = false;
 		}
 //		Sound die = Gdx.audio.newSound(Gdx.files.internal("audio/GameOver.ogg"));
@@ -221,7 +221,7 @@ public class Player extends Sprite implements InputProcessor{
 		case Keys.SPACE:
 			//Bomb Bomb = new Bomb((int)(getX()),(int)(getY()));
 			if(life==true) {
-				Play.Setbomb((int)getX(),(int)getY(), totalBomb, fireLength);
+				parent.Setbomb((int)getX(),(int)getY(), totalBomb, fireLength);
 //				if(this.tt == TrangThai.still) {
 //					Play.Setbomb((int)getX(),(int)getY(), totalBomb, fireLength);
 //				}
@@ -392,116 +392,3 @@ public class Player extends Sprite implements InputProcessor{
 }
 
 
-
-
-
-/**
-public void update(float delta) {
-	//extra addading gravity
-	velocity.y -= gravity * delta;
-	
-	//clamp velocity
-	if(velocity.y > speed) {
-		velocity.y = speed;
-	} else if(velocity.y < -speed) {
-		velocity.y = -speed;
-	}
-	
-	//save old pos
-	float oldX = getX(), oldY = getY();
-	boolean collisionX = false, collisionY = false;
-	System.out.println((int)getX() + " " + (int)getY());
-	
-	//set texture for sprite
-	if(velocity.x >0) {
-		this.setTexture(new Texture("sprite/MHright.png"));
-	}
-	if(velocity.x<0) {
-		this.setTexture(new Texture("sprite/MHleft.png"));
-	}
-	if(velocity.y > 0) {
-		this.setTexture(new Texture("sprite/MHdown.png"));
-	}
-	if(velocity.y<0) {
-		this.setTexture(new Texture("sprite/myhero.png"));
-	}
-	
-	//move on X
-	setX(getX() + velocity.x*delta* 1f);
-			
-	//set value of collisionX
-	if(velocity.x <0) {
-		// top left
-		collisionX = isCellBlocked(getX(), getY() + getHeight());
-		//middle left
-		if(!collisionX) {
-			collisionX = isCellBlocked(getX(), (getY() + getHeight())/2);
-		}
-		//
-		if(!collisionX) {
-			collisionX = isCellBlocked(getX(),getY());
-		}
-	}else if(velocity.x >0){
-		//top right
-		collisionX = isCellBlocked(getX() + getWidth(), getY() + getHeight());
-		//middle right
-		if(!collisionX) {
-			collisionX = isCellBlocked(getX() + getWidth(), (getY() + getHeight())/2);
-		}
-		//bottom right
-		if(!collisionX) {
-			collisionX = isCellBlocked(getX() + getWidth(), getY());
-		}
-	}
-	
-	//react to collisionX
-	if(collisionX) {
-		setX(oldX);
-		velocity.x = 0;
-	}
-	
-	//move on Y
-	setY(getY() + velocity.y*delta*1f);
-			
-	if(velocity.y <0) {
-		//bottom left
-		collisionY = isCellBlocked(getX(), getY());
-		//bottom
-		if(!collisionY) {
-			collisionY = isCellBlocked((getX()+getWidth())/2, getY());
-		}
-		//bottom right
-		if(!collisionY) {
-			collisionY = isCellBlocked(getX()+getWidth(), getY());
-		}
-	}else if(velocity.y >0){
-		//left top
-		collisionY = isCellBlocked(getX(), getY() + getHeight());
-		//top
-		if(!collisionY) {
-			collisionY = isCellBlocked((getX()+getWidth())/2, getY() + getHeight());
-		}
-		//right top
-		if(!collisionY) {
-			collisionY = isCellBlocked(getX()+getWidth(), getY() + getHeight());
-		}
-	}
-	
-	//react to collisionY
-	if(collisionY) {
-		setY(oldY);
-		velocity.y = 0;
-	}
-
-	
-	
-}
-
-//	private boolean isCellBlocked(float x,float y) {
-//		
-//		Cell cell = collisionLayer.getCell((int)(x / collisionLayer.getTileWidth()),(int)(y / collisionLayer.getTileHeight()));
-//		return cell != null && cell.getTile() != null && (cell.getTile().getProperties().containsKey("block") || cell.getTile().getProperties().containsKey("hamblock"));
-//
-//	}
-//
-*/

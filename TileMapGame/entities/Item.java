@@ -5,22 +5,26 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
-import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.PointerPosition;
+import TileMapGame.Play;
+
 
 public class Item extends Sprite {
 	public enum ItemType{
 		boost,
 		fire,
-		extraBomb
+		extraBomb,
+		finish
 	}
 	private ItemType itemType;
 	private Player p1;
 	private boolean appear = false;
 	private TiledMapTileLayer posInMap;
+	private Play parent;
 	
 	//Constructor
-	public Item(ItemType a,Sprite sprite, TiledMapTileLayer _posInMap, Player _player1) {
+	public Item(ItemType a,Sprite sprite, TiledMapTileLayer _posInMap, Player _player1,Play _play) {
 		super(sprite);
+		this.parent = _play;
 		setItemType(a);
 		this.setP1(_player1);
 		this.posInMap = _posInMap;
@@ -55,6 +59,10 @@ public class Item extends Sprite {
 				this.p1.setSpeed(p1.getSpeed()+5);
 			}
 			this.appear = false;
+			if(itemType == ItemType.finish) {
+				parent.setWinCondition(true);
+				this.appear = true;
+			}
 		}
 		
 		

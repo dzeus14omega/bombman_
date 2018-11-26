@@ -12,43 +12,48 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.desktop.views.MenuScreen.MyActor;
 
-public class MenuScreen implements Screen{
+public class LoseScreeen implements Screen{
 	private Box2DTutorial parent;
 	private Stage stage;
-	private static Music musicStartgame;
+	private static Music LoseMusic;
 	
 	class MyActor extends Actor{
-		Texture background = new Texture(Gdx.files.internal("skin/bombmanBackGround.png"));
-		Texture cuteBackground = new Texture(Gdx.files.internal("skin/cuteBackground.jpg"));
+		Texture background = new Texture(Gdx.files.internal("skin/Game_Over.jpg"));
+		//Texture cuteBackground = new Texture(Gdx.files.internal("skin/cuteBackground.jpg"));
 		@Override
 		public void draw(Batch batch, float parentAlpha) {
-			batch.draw(cuteBackground,0,0);
-			batch.draw(background,100,650);
+			//batch.draw(cuteBackground,0,0);
+			batch.draw(background,230,650);
 		}
 	}
 	
+	
+	
+	
 	//Constructor
-	public MenuScreen(Box2DTutorial box2dTutorial){
+	public LoseScreeen(Box2DTutorial box2dTutorial){
 		parent = box2dTutorial;
 		stage = new Stage(new ScreenViewport());	
 		
-		
-		
 	}
-	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
+		
 		if(parent.getPreferences().isMusicEnabled()) {
-			musicStartgame = Gdx.audio.newMusic(Gdx.files.internal("audio/SuperBomberman-Title.ogg"));
-			musicStartgame.setLooping(true); 
-			musicStartgame.setVolume(parent.getPreferences().getMusicVolume());
-			musicStartgame.play();
+			LoseMusic = Gdx.audio.newMusic(Gdx.files.internal("audio/GameOver.ogg"));
+			LoseMusic.setVolume(parent.getPreferences().getMusicVolume());
+			LoseMusic.play();
 		}
 		
+		
+		
 		Gdx.input.setInputProcessor(stage);
+		
 		
 		MyActor actor = new MyActor();
 		stage.addActor(actor);
@@ -57,43 +62,31 @@ public class MenuScreen implements Screen{
 		//table.setDebug(true);
 		stage.addActor(table);
 		
-		//goi den cac skin
+		//Set skin
 		Skin skin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
+		TextButton PlayAgain = new TextButton("Play again", skin);
+		TextButton MainMenu = new TextButton("Main Menu", skin);
 		
-		//cac Button
-		TextButton newGame = new TextButton("New Game", skin);
-		TextButton preferences = new TextButton("Preferences", skin);
-		TextButton exit = new TextButton("Exit", skin);
-		
-		//ke bang tao cac nut
-		table.add(newGame).fillX().uniformX();
+		table.add(PlayAgain).fillX().uniformX();
 		table.row().pad(10, 0, 10, 0);
-		table.add(preferences).fillX().uniformX();
-		table.row();
-		table.add(exit).fillX().uniformX();
+		table.add(MainMenu).fillX().uniformX();
 		
-		//add event exit,new game, preferences
-		exit.addListener(new ChangeListener() {
-			public void changed(ChangeEvent event, Actor actor) {
-				Gdx.app.exit();				
-			}
-		});
-		newGame.addListener(new ChangeListener() {
+		PlayAgain.addListener(new ChangeListener() {
 			public void changed(ChangeEvent event, Actor actor) {
 				parent.changeScreen(Box2DTutorial.APPLICATION);	
 				try {
-					musicStartgame.dispose();
+					LoseMusic.dispose();
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
 			}
 		});
-		preferences.addListener(new ChangeListener() {
+		MainMenu.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				parent.changeScreen(Box2DTutorial.PREFERENCES);		
+				parent.changeScreen(Box2DTutorial.MENU);		
 				try {
-					musicStartgame.dispose();
+					LoseMusic.dispose();
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
@@ -101,6 +94,7 @@ public class MenuScreen implements Screen{
 				
 			}
 		});
+		
 		
 	}
 
@@ -141,17 +135,13 @@ public class MenuScreen implements Screen{
 	public void dispose() {
 		// TODO Auto-generated method stub
 		stage.dispose();
-		musicStartgame.dispose();
-		//System.out.println("yes");
+		LoseMusic.dispose();
 	}
-
-	
 	//Getter/Setter
-	public Box2DTutorial getParent() {
-		return parent;
-	}
-	public void setParent(Box2DTutorial parent) {
-		this.parent = parent;
-	}
-
+		public Box2DTutorial getParent() {
+			return parent;
+		}
+		public void setParent(Box2DTutorial parent) {
+			this.parent = parent;
+		}
 }
